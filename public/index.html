@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi App</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 40px auto; padding: 0 20px; }
+    input, button { padding: 10px; font-size: 16px; margin-top: 10px; }
+    input { width: 70%; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>Mi App</h1>
+  <input type="text" id="texto" placeholder="Escribe algo...">
+  <button onclick="agregar()">Agregar</button>
+  <ul id="lista"></ul>
+
+  <script>
+    async function cargar() {
+      const res = await fetch('/api/registros');
+      const datos = await res.json();
+      const lista = document.getElementById('lista');
+      lista.innerHTML = '';
+      datos.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.contenido;
+        lista.appendChild(li);
+      });
+    }
+
+    async function agregar() {
+      const texto = document.getElementById('texto').value;
+      if (!texto) return;
+      await fetch('/api/registros', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contenido: texto })
+      });
+      document.getElementById('texto').value = '';
+      cargar();
+    }
+
+    cargar();
+  </script>
+</body>
+</html>
