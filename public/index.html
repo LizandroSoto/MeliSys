@@ -9,7 +9,7 @@
 <body>
   <header class="topbar">
     <button id="btnMenu" class="btn-menu">☰</button>
-    <h1 class="logo">MeliSys</h1>
+    <h1 class="logo" onclick="irAInicio()">MeliSys</h1>
   </header>
   <nav id="sidebar" class="sidebar">
     <div class="sidebar-item" data-tab="peliculas">🎬 Películas</div>
@@ -23,17 +23,19 @@
     <section class="seccion active" id="bienvenida">
       <div class="bienvenida">
         <h2 class="bienvenida-titulo">Bienvenido a MeliSys</h2>
-        <p class="bienvenida-texto">Tu espacio para organizar películas, series y recordatorios juntos.</p>
         <div class="bienvenida-botones">
-          <button onclick="irASeccion('peliculas')">🎬 Ver Películas</button>
-          <button onclick="irASeccion('series')">📺 Ver Series</button>
-          <button onclick="irASeccion('calendario')">📅 Ver Calendario</button>
+          <button onclick="irASeccion('peliculas')">🎬 Películas</button>
+          <button onclick="irASeccion('series')">📺 Series</button>
+          <button onclick="irASeccion('calendario')">📅 Calendario</button>
         </div>
       </div>
     </section>
     <!-- PELÍCULAS -->
     <section class="seccion" id="peliculas">
-      <h2>Películas</h2>
+      <div class="seccion-header">
+        <h2>Películas</h2>
+        <button id="btnOrdenPeliculas" class="btn-orden" onclick="alternarOrdenPeliculas()">↓ Más nueva a más vieja</button>
+      </div>
       <div class="form-fila">
         <input type="text" id="tituloPelicula" placeholder="Nombre de la película...">
         <button onclick="agregarPelicula()">Agregar</button>
@@ -42,7 +44,10 @@
     </section>
     <!-- SERIES -->
     <section class="seccion" id="series">
-      <h2>Series</h2>
+      <div class="seccion-header">
+        <h2>Series</h2>
+        <button id="btnOrdenSeries" class="btn-orden" onclick="alternarOrdenSeries()">↓ Más nueva a más vieja</button>
+      </div>
       <div class="form-fila">
         <input type="text" id="tituloSerie" placeholder="Nombre de la serie...">
         <button onclick="agregarSerie()">Agregar</button>
@@ -63,11 +68,11 @@
         <button onclick="cambiarMes(1)">→</button>
       </div>
       <div class="grid-dias" id="gridDias"></div>
-      <div id="formRecordatorio" class="form-recordatorio">
-        <div id="fechaSeleccionadaTexto"></div>
-        <input type="text" id="textoRecordatorio" placeholder="Recordatorio...">
+      <div id="formRecordatorio" class="form-calendario">
+        <input type="text" id="textoRecordatorio" placeholder="Escribe aquí...">
         <button onclick="agregarRecordatorio()">Agregar</button>
       </div>
+      <ul id="listaRecordatoriosDia" class="lista-recordatorios-dia"></ul>
     </section>
   </main>
 <script src="app.js"></script>

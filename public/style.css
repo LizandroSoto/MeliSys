@@ -33,7 +33,9 @@ body {
   font-weight: 700;
   letter-spacing: 1px;
   color: #f5f5f5;
+  cursor: pointer;
 }
+.logo:hover { color: #90caf9; }
 
 /* Menú lateral */
 .sidebar {
@@ -81,7 +83,22 @@ body {
 }
 .seccion { display: none; }
 .seccion.active { display: block; }
-h2 { color: #f5f5f5; margin-bottom: 15px; font-size: 20px; }
+h2 { color: #f5f5f5; margin-bottom: 0; font-size: 20px; }
+
+.seccion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+.btn-orden {
+  font-size: 12px;
+  padding: 6px 10px;
+  color: #90caf9;
+  border-color: #333;
+}
 
 .form-fila { display: flex; gap: 8px; margin-bottom: 16px; }
 input, button {
@@ -132,6 +149,7 @@ li .izq { display: flex; align-items: center; gap: 10px; }
 }
 .dia:hover { background: #262626; }
 .dia.hoy { border-color: #90caf9; }
+.dia.seleccionado { background: #2a3a4a; border-color: #64b5f6; }
 .dia.tiene-evento::after {
   content: '';
   width: 5px; height: 5px;
@@ -143,10 +161,15 @@ li .izq { display: flex; align-items: center; gap: 10px; }
 }
 .dia.vacio { background: transparent; border: none; cursor: default; }
 
-.form-recordatorio { margin-top: 18px; display: none; }
-.form-recordatorio.visible { display: block; }
-#fechaSeleccionadaTexto { color: #90caf9; margin-bottom: 8px; font-size: 14px; }
-.form-recordatorio input { width: 100%; margin-bottom: 8px; }
+.form-calendario { margin-top: 18px; display: none; }
+.form-calendario.visible { display: flex; gap: 8px; }
+.form-calendario input { flex: 1; margin-bottom: 0; }
+
+.lista-recordatorios-dia {
+  display: none;
+  margin-top: 12px;
+}
+.lista-recordatorios-dia.visible { display: block; }
 
 .fecha-tag { color: #90caf9; margin-right: 8px; font-size: 12px; }
 
@@ -160,17 +183,12 @@ li .izq { display: flex; align-items: center; gap: 10px; }
   color: #f5f5f5;
   margin-bottom: 12px;
 }
-.bienvenida-texto {
-  color: #999;
-  font-size: 15px;
-  margin-bottom: 30px;
-}
 .bienvenida-botones {
   display: flex;
   flex-direction: column;
   gap: 10px;
   max-width: 260px;
-  margin: 0 auto;
+  margin: 30px auto 0;
 }
 .bienvenida-botones button {
   padding: 14px;

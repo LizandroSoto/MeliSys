@@ -11,15 +11,25 @@ const db = new Database('./datos.db');
 
 db.exec(`CREATE TABLE IF NOT EXISTS peliculas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  titulo TEXT,
-  vista INTEGER DEFAULT 0
+  titulo TEXT NOT NULL,
+  vista INTEGER DEFAULT 0,
+  creado_en TEXT DEFAULT (datetime('now'))
 )`);
 
 db.exec(`CREATE TABLE IF NOT EXISTS series (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  titulo TEXT,
-  vista INTEGER DEFAULT 0
+  titulo TEXT NOT NULL,
+  vista INTEGER DEFAULT 0,
+  creado_en TEXT DEFAULT (datetime('now'))
 )`);
+
+// Migrar tablas antiguas sin columna creado_en
+['peliculas', 'series'].forEach(tabla => {
+  const columnas = db.prepare(`PRAGMA table_info(${tabla})`).all();
+  if (!columnas.some(c => c.name === 'creado_en')) {
+    db.exec(`ALTER TABLE ${tabla} ADD COLUMN creado_en TEXT DEFAULT (datetime('now'))`);
+  }
+});
 
 db.exec(`CREATE TABLE IF NOT EXISTS recordatorios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,13 +37,19 @@ db.exec(`CREATE TABLE IF NOT EXISTS recordatorios (
   texto TEXT
 )`);
 
+function ordenSQL(orden) {
+  return orden === 'asc' ? 'ASC' : 'DESC';
+}
+
 // Películas
 app.get('/api/peliculas', (req, res) => {
-  res.json(db.prepare('SELECT * FROM peliculas ORDER BY id DESC').all());
+  const orden = ordenSQL(req.query.orden);
+  res.json(db.prepare(`SELECT * FROM peliculas ORDER BY creado_en ${orden}, id ${orden}`).all());
 });
 app.post('/api/peliculas', (req, res) => {
   const { titulo } = req.body;
-  const result = db.prepare('INSERT INTO peliculas (titulo, vista) VALUES (?, 0)').run(titulo);
+  if (!titulo || !titulo.trim()) return res.status(400).json({ error: 'Título requerido' });
+  const result = db.prepare('INSERT INTO peliculas (titulo, vista) VALUES (?, 0)').run(titulo.trim());
   res.json({ id: result.lastInsertRowid });
 });
 app.patch('/api/peliculas/:id', (req, res) => {
@@ -48,11 +64,13 @@ app.delete('/api/peliculas/:id', (req, res) => {
 
 // Series
 app.get('/api/series', (req, res) => {
-  res.json(db.prepare('SELECT * FROM series ORDER BY id DESC').all());
+  const orden = ordenSQL(req.query.orden);
+  res.json(db.prepare(`SELECT * FROM series ORDER BY creado_en ${orden}, id ${orden}`).all());
 });
 app.post('/api/series', (req, res) => {
   const { titulo } = req.body;
-  const result = db.prepare('INSERT INTO series (titulo, vista) VALUES (?, 0)').run(titulo);
+  if (!titulo || !titulo.trim()) return res.status(400).json({ error: 'Título requerido' });
+  const result = db.prepare('INSERT INTO series (titulo, vista) VALUES (?, 0)').run(titulo.trim());
   res.json({ id: result.lastInsertRowid });
 });
 app.patch('/api/series/:id', (req, res) => {

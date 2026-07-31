@@ -21,6 +21,14 @@ document.querySelectorAll('.sidebar-item').forEach(item => {
   };
 });
 
+function irAInicio() {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
+  document.getElementById('bienvenida').classList.add('active');
+  sidebar.classList.remove('abierto');
+  overlay.classList.remove('visible');
+}
+
 function irASeccion(tab) {
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
@@ -29,8 +37,17 @@ function irASeccion(tab) {
 }
 
 // ---------- PELÍCULAS ----------
+let ordenPeliculas = 'desc';
+
+function alternarOrdenPeliculas() {
+  ordenPeliculas = ordenPeliculas === 'desc' ? 'asc' : 'desc';
+  document.getElementById('btnOrdenPeliculas').textContent =
+    ordenPeliculas === 'desc' ? '↓ Más nueva a más vieja' : '↑ Más vieja a más nueva';
+  cargarPeliculas();
+}
+
 async function cargarPeliculas() {
-  const res = await fetch('/api/peliculas');
+  const res = await fetch(`/api/peliculas?orden=${ordenPeliculas}`);
   const datos = await res.json();
   const lista = document.getElementById('listaPeliculas');
   lista.innerHTML = '';
@@ -69,8 +86,17 @@ async function borrarPelicula(id) {
   cargarPeliculas();
 }
 // ---------- SERIES ----------
+let ordenSeries = 'desc';
+
+function alternarOrdenSeries() {
+  ordenSeries = ordenSeries === 'desc' ? 'asc' : 'desc';
+  document.getElementById('btnOrdenSeries').textContent =
+    ordenSeries === 'desc' ? '↓ Más nueva a más vieja' : '↑ Más vieja a más nueva';
+  cargarSeries();
+}
+
 async function cargarSeries() {
-  const res = await fetch('/api/series');
+  const res = await fetch(`/api/series?orden=${ordenSeries}`);
   const datos = await res.json();
   const lista = document.getElementById('listaSeries');
   lista.innerHTML = '';
@@ -117,6 +143,7 @@ async function cargarRecordatorios() {
   recordatorios = await res.json();
   dibujarCalendario();
   dibujarListaRecordatorios();
+  mostrarRecordatoriosDia();
 }
 function dibujarCalendario() {
   const anio = fechaActual.getFullYear();
@@ -143,18 +170,42 @@ function dibujarCalendario() {
     const fechaStr = `${anio}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
     const celda = document.createElement('div');
     celda.className = 'dia';
+    if (fechaStr === fechaSeleccionada) celda.classList.add('seleccionado');
     celda.textContent = dia;
     if (recordatorios.some(r => r.fecha === fechaStr)) celda.classList.add('tiene-evento');
     if (fechaStr === hoy.toISOString().slice(0,10)) celda.classList.add('hoy');
-    celda.onclick = () => seleccionarFecha(fechaStr, dia, nombresMes[mes]);
+    celda.onclick = () => seleccionarFecha(fechaStr);
     grid.appendChild(celda);
   }
 }
-function seleccionarFecha(fechaStr, dia, nombreMes) {
+function seleccionarFecha(fechaStr) {
   fechaSeleccionada = fechaStr;
-  const form = document.getElementById('formRecordatorio');
-  form.classList.add('visible');
-  document.getElementById('fechaSeleccionadaTexto').textContent = `Recordatorio para el ${dia} de ${nombreMes}`;
+  document.getElementById('formRecordatorio').classList.add('visible');
+  dibujarCalendario();
+  mostrarRecordatoriosDia();
+}
+
+function mostrarRecordatoriosDia() {
+  const lista = document.getElementById('listaRecordatoriosDia');
+  lista.innerHTML = '';
+  if (!fechaSeleccionada) {
+    lista.classList.remove('visible');
+    return;
+  }
+  const delDia = recordatorios.filter(r => r.fecha === fechaSeleccionada);
+  if (delDia.length === 0) {
+    lista.classList.remove('visible');
+    return;
+  }
+  lista.classList.add('visible');
+  delDia.forEach(r => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${r.texto}</span>
+      <button class="borrar" onclick="borrarRecordatorio(${r.id})">✕</button>
+    `;
+    lista.appendChild(li);
+  });
 }
 async function agregarRecordatorio() {
   const input = document.getElementById('textoRecordatorio');
