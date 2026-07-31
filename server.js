@@ -1,13 +1,16 @@
 const express = require('express');
 const Database = require('better-sqlite3');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-const db = new Database('./datos.db');
+const dbPath = path.join(__dirname, 'datos.db');
+const db = new Database(dbPath);
+db.pragma('journal_mode = WAL');
 
 db.exec(`CREATE TABLE IF NOT EXISTS peliculas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,4 +102,5 @@ app.delete('/api/recordatorios/:id', (req, res) => {
 
 app.listen(3000, '0.0.0.0', () => {
   console.log('Servidor corriendo en el puerto 3000');
+  console.log('Base de datos guardada en:', dbPath);
 });
