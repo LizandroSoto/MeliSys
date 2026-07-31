@@ -9,7 +9,6 @@ overlay.onclick = () => {
   sidebar.classList.remove('abierto');
   overlay.classList.remove('visible');
 };
-
 // Navegación
 document.querySelectorAll('.sidebar-item').forEach(item => {
   item.onclick = () => {
@@ -21,7 +20,13 @@ document.querySelectorAll('.sidebar-item').forEach(item => {
     overlay.classList.remove('visible');
   };
 });
-document.querySelector('.sidebar-item[data-tab="peliculas"]').classList.add('active');
+
+function irASeccion(tab) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.sidebar-item[data-tab="${tab}"]`).classList.add('active');
+  document.getElementById(tab).classList.add('active');
+}
 
 // ---------- PELÍCULAS ----------
 async function cargarPeliculas() {
@@ -63,7 +68,6 @@ async function borrarPelicula(id) {
   await fetch(`/api/peliculas/${id}`, { method: 'DELETE' });
   cargarPeliculas();
 }
-
 // ---------- SERIES ----------
 async function cargarSeries() {
   const res = await fetch('/api/series');
@@ -104,25 +108,21 @@ async function borrarSerie(id) {
   await fetch(`/api/series/${id}`, { method: 'DELETE' });
   cargarSeries();
 }
-
 // ---------- CALENDARIO Y RECORDATORIOS ----------
 let fechaActual = new Date();
 let fechaSeleccionada = null;
 let recordatorios = [];
-
 async function cargarRecordatorios() {
   const res = await fetch('/api/recordatorios');
   recordatorios = await res.json();
   dibujarCalendario();
   dibujarListaRecordatorios();
 }
-
 function dibujarCalendario() {
   const anio = fechaActual.getFullYear();
   const mes = fechaActual.getMonth();
   const nombresMes = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   document.getElementById('mesTitulo').textContent = `${nombresMes[mes]} ${anio}`;
-
   const grid = document.getElementById('gridDias');
   grid.innerHTML = '';
   ['D','L','M','M','J','V','S'].forEach(d => {
@@ -131,17 +131,14 @@ function dibujarCalendario() {
     el.textContent = d;
     grid.appendChild(el);
   });
-
   const primerDia = new Date(anio, mes, 1).getDay();
   const totalDias = new Date(anio, mes + 1, 0).getDate();
   const hoy = new Date();
-
   for (let i = 0; i < primerDia; i++) {
     const vacio = document.createElement('div');
     vacio.className = 'dia vacio';
     grid.appendChild(vacio);
   }
-
   for (let dia = 1; dia <= totalDias; dia++) {
     const fechaStr = `${anio}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
     const celda = document.createElement('div');
@@ -153,14 +150,12 @@ function dibujarCalendario() {
     grid.appendChild(celda);
   }
 }
-
 function seleccionarFecha(fechaStr, dia, nombreMes) {
   fechaSeleccionada = fechaStr;
   const form = document.getElementById('formRecordatorio');
   form.classList.add('visible');
   document.getElementById('fechaSeleccionadaTexto').textContent = `Recordatorio para el ${dia} de ${nombreMes}`;
 }
-
 async function agregarRecordatorio() {
   const input = document.getElementById('textoRecordatorio');
   if (!input.value.trim() || !fechaSeleccionada) return;
@@ -171,17 +166,12 @@ async function agregarRecordatorio() {
   input.value = '';
   cargarRecordatorios();
 }
-
 async function borrarRecordatorio(id) {
   await fetch(`/api/recordatorios/${id}`, { method: 'DELETE' });
   cargarRecordatorios();
 }
-
 function dibujarListaRecordatorios() {
-  // Lista dentro del calendario
   const listaRecordatorios = [...recordatorios].sort((a,b) => a.fecha.localeCompare(b.fecha));
-
-  // Sección "Recordatorios" del menú
   const listaSolo = document.getElementById('listaRecordatoriosSolo');
   listaSolo.innerHTML = '';
   listaRecordatorios.forEach(r => {
@@ -193,12 +183,10 @@ function dibujarListaRecordatorios() {
     listaSolo.appendChild(li);
   });
 }
-
 function cambiarMes(delta) {
   fechaActual.setMonth(fechaActual.getMonth() + delta);
   dibujarCalendario();
 }
-
 // Inicializar todo
 cargarPeliculas();
 cargarSeries();

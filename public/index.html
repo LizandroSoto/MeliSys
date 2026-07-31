@@ -7,25 +7,32 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header class="topbar">
     <button id="btnMenu" class="btn-menu">☰</button>
     <h1 class="logo">MeliSys</h1>
   </header>
-
   <nav id="sidebar" class="sidebar">
     <div class="sidebar-item" data-tab="peliculas">🎬 Películas</div>
     <div class="sidebar-item" data-tab="series">📺 Series</div>
     <div class="sidebar-item" data-tab="recordatorios">🔔 Recordatorios</div>
     <div class="sidebar-item" data-tab="calendario">📅 Calendario</div>
   </nav>
-
   <div id="overlay" class="overlay"></div>
-
   <main class="contenido">
-
+    <!-- BIENVENIDA -->
+    <section class="seccion active" id="bienvenida">
+      <div class="bienvenida">
+        <h2 class="bienvenida-titulo">Bienvenido a MeliSys</h2>
+        <p class="bienvenida-texto">Tu espacio para organizar películas, series y recordatorios juntos.</p>
+        <div class="bienvenida-botones">
+          <button onclick="irASeccion('peliculas')">🎬 Ver Películas</button>
+          <button onclick="irASeccion('series')">📺 Ver Series</button>
+          <button onclick="irASeccion('calendario')">📅 Ver Calendario</button>
+        </div>
+      </div>
+    </section>
     <!-- PELÍCULAS -->
-    <section class="seccion active" id="peliculas">
+    <section class="seccion" id="peliculas">
       <h2>Películas</h2>
       <div class="form-fila">
         <input type="text" id="tituloPelicula" placeholder="Nombre de la película...">
@@ -33,7 +40,6 @@
       </div>
       <ul id="listaPeliculas"></ul>
     </section>
-
     <!-- SERIES -->
     <section class="seccion" id="series">
       <h2>Series</h2>
@@ -43,13 +49,11 @@
       </div>
       <ul id="listaSeries"></ul>
     </section>
-
     <!-- RECORDATORIOS -->
     <section class="seccion" id="recordatorios">
       <h2>Recordatorios</h2>
       <ul id="listaRecordatoriosSolo"></ul>
     </section>
-
     <!-- CALENDARIO -->
     <section class="seccion" id="calendario">
       <h2>Calendario</h2>
@@ -59,16 +63,13 @@
         <button onclick="cambiarMes(1)">→</button>
       </div>
       <div class="grid-dias" id="gridDias"></div>
-
       <div id="formRecordatorio" class="form-recordatorio">
         <div id="fechaSeleccionadaTexto"></div>
         <input type="text" id="textoRecordatorio" placeholder="Recordatorio...">
         <button onclick="agregarRecordatorio()">Agregar</button>
       </div>
     </section>
-
   </main>
-
 <script src="app.js"></script>
 </body>
 </html>

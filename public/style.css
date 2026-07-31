@@ -149,3 +149,30 @@ li .izq { display: flex; align-items: center; gap: 10px; }
 .form-recordatorio input { width: 100%; margin-bottom: 8px; }
 
 .fecha-tag { color: #90caf9; margin-right: 8px; font-size: 12px; }
+
+/* Bienvenida */
+.bienvenida {
+  text-align: center;
+  padding: 60px 10px;
+}
+.bienvenida-titulo {
+  font-size: 32px;
+  color: #f5f5f5;
+  margin-bottom: 12px;
+}
+.bienvenida-texto {
+  color: #999;
+  font-size: 15px;
+  margin-bottom: 30px;
+}
+.bienvenida-botones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 260px;
+  margin: 0 auto;
+}
+.bienvenida-botones button {
+  padding: 14px;
+  font-size: 15px;
+}
