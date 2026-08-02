@@ -210,12 +210,25 @@ function mostrarRecordatoriosDia() {
 async function agregarRecordatorio() {
   const input = document.getElementById('textoRecordatorio');
   if (!input.value.trim() || !fechaSeleccionada) return;
-  await fetch('/api/recordatorios', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fecha: fechaSeleccionada, texto: input.value.trim() })
-  });
+  await guardarRecordatorio(fechaSeleccionada, input.value.trim());
   input.value = '';
   cargarRecordatorios();
+}
+
+async function agregarRecordatorioSolo() {
+  const fecha = document.getElementById('fechaRecordatorioSolo').value;
+  const input = document.getElementById('textoRecordatorioSolo');
+  if (!fecha || !input.value.trim()) return;
+  await guardarRecordatorio(fecha, input.value.trim());
+  input.value = '';
+  cargarRecordatorios();
+}
+
+async function guardarRecordatorio(fecha, texto) {
+  await fetch('/api/recordatorios', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fecha, texto })
+  });
 }
 async function borrarRecordatorio(id) {
   await fetch(`/api/recordatorios/${id}`, { method: 'DELETE' });
@@ -239,6 +252,7 @@ function cambiarMes(delta) {
   dibujarCalendario();
 }
 // Inicializar todo
+document.getElementById('fechaRecordatorioSolo').value = new Date().toISOString().slice(0, 10);
 cargarPeliculas();
 cargarSeries();
 cargarRecordatorios();
